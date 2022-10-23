@@ -12,6 +12,7 @@ function App() {
     <a href="#about">About</a>
   </div>
    </>
+  
   );
 }
 
