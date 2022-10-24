@@ -1,37 +1,48 @@
-function Tabla() {
-    return ( 
-        <table className="table">
-  <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">First</th>
-      <th scope="col">Last</th>
-      <th scope="col">Handle</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th scope="row">1</th>
-      <td>Mark</td>
-      <td>Otto</td>
-      <td>@mdo</td>
-    </tr>
-    <tr>
-      <th scope="row">2</th>
-      <td>Jacob</td>
-      <td>Thornton</td>
-      <td>@fat</td>
-    </tr>
-    <tr>
-      <th scope="row">3</th>
-      <td>Larry</td>
-      <td>the Bird</td>
-      <td>@twitter</td>
-    </tr>
-  </tbody>
-</table>
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
+import { useState } from "react";
+import { useEffect } from "react";
 
-    );
+function Tabla() {
+  const [datos, setDatos] = useState([]);
+  const getData = async () => {
+    const snapshot = await getDocs(collection(db, "empleados"));
+    console.log(snapshot.docs.map((doc) => doc.data()));
+    setDatos(snapshot.docs.map((doc) => doc.data()));
+  };
+  useEffect(() => {
+    getData();
+  }, []);
+
+  return (
+    <>
+    <code>{JSON.stringify(datos)}</code>
+    <table className="table table-borderd">
+      <thead className="table-dark">
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Nombre</th>
+          <th scope="col">Puesto</th>
+          <th scope="col">Fecha de contratacion</th>
+        </tr>
+      </thead>
+      <tbody>
+       {
+        datos.map((empleado, index) => {
+            return(
+                <tr key={index}>
+                <th >{index}</th>
+                <td>{empleado.nombre}</td>
+                <td>{empleado.puesto}</td>
+                <td>{empleado.fecha_contratacion}</td>
+              </tr>
+            )
+        })
+       } 
+      </tbody>
+    </table>
+    </>
+  );
 }
 
 export default Tabla;
