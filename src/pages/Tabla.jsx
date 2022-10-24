@@ -1,4 +1,4 @@
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase";
 import { useState } from "react";
 import { useEffect } from "react";
@@ -6,9 +6,15 @@ import { useEffect } from "react";
 function Tabla() {
   const [datos, setDatos] = useState([]);
   const getData = async () => {
-    const snapshot = await getDocs(collection(db, "empleados"));
-    console.log(snapshot.docs.map((doc) => doc.data()));
-    setDatos(snapshot.docs.map((doc) => doc.data()));
+    // const snapshot = await getDocs(collection(db, "empleados"));
+    // console.log(snapshot.docs.map((doc) => doc.data()));
+    // setDatos(snapshot.docs.map((doc) => doc.data()));
+
+    onSnapshot(collection(db, "empleados"), (querySnapshot) => {
+      setDatos(querySnapshot.docs.map(doc => {
+          return { ...doc.data()}
+      }));
+  });
   };
   useEffect(() => {
     getData();

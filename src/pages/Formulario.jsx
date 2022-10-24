@@ -1,36 +1,56 @@
+import { useState } from "react";
+import { addDoc, collection, doc } from "firebase/firestore";
+import { db } from "../firebase";
+import Swal from 'sweetalert2';
+
 function Formulario() {
+  const [formulario, setFormulario] = useState({
+    nombre: '',
+    puesto: '',
+    fecha_contratacion: '',
+});
+const handleInputChange = (event) => {
+  setFormulario({
+      ...formulario,
+      [event.target.name]: event.target.value
+  });
+}
+const guardarFormulario = async (event) =>{
+  event.preventDefault();
+  console.log(formulario);
+  await addDoc(collection(db, "empleados"), formulario );
+  Swal.fire(
+    'Mensaje',
+    'Formulado enviado a la base de datos',
+    'success',
+  ).then(()=>{
+    window.location.href = "/tabla";
+  });
+
+};
     return ( 
-        <form>
-        <div className="form-group">
-          <label htmlFor="exampleInputEmail1">Email address</label>
-          <input
-            type="email"
-            className="form-control"
-            id="exampleInputEmail1"
-            aria-describedby="emailHelp"
-          />
-          <small id="emailHelp" className="form-text text-muted">
-            We'll never share your email with anyone else.
-          </small>
+        <>
+        <code>{JSON.stringify(formulario)}</code>
+        <form onSubmit={guardarFormulario}>
+        <div className="mb-3">
+          <label className="form-label">Nombre</label>
+          <input type="text" className="form-control" name='nombre' onChange={handleInputChange}/>
         </div>
-        <div className="form-group">
-          <label htmlFor="exampleInputPassword1">Password</label>
-          <input
-            type="password"
-            className="form-control"
-            id="exampleInputPassword1"
-          />
+        <div className="mb-3">
+          <label className="form-label">Puesto</label>
+          <input type="text" className="form-control" name='puesto'onChange={handleInputChange}/>
         </div>
-        <div className="form-group form-check">
-          <input type="checkbox" className="form-check-input" id="exampleCheck1" />
-          <label className="form-check-label" htmlFor="exampleCheck1">
-            Check me out
-          </label>
+        <div className="mb-3">
+          <label className="form-label">Fecha de contratacion</label>
+          <input type="date" className="form-control" name='fecha_contratacion'onChange={handleInputChange}/>
         </div>
+        
+        
         <button type="submit" className="btn btn-primary">
           Submit
         </button>
       </form>
+        </>
       
      );
 }
